@@ -1,3 +1,6 @@
+# Name of dashboard which data will be sent to
+DASHBOARD_NAME = ''
+
 # URL for your Dashing instance (with trailing slash)
 DASHING_URL = ''
 # Auth token set in config.ru file of your Dashing

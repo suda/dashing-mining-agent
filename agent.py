@@ -15,6 +15,7 @@ except ImportError:
 mc = memcache.Client(settings.MEMCACHED)
 
 def update_number_widget(widget, value):
+	widget = settings.DASHBOARD_NAME + '_' + widget
 	old_value = mc.get(settings.MEMCACHED_PREFIX + widget)
 	payload = {
 		'auth_token': settings.DASHING_AUTH_TOKEN,
@@ -28,6 +29,7 @@ def update_number_widget(widget, value):
 	mc.set(settings.MEMCACHED_PREFIX + widget, value, 0)
 
 def update_graph_widget(widget, value):
+	widget = settings.DASHBOARD_NAME + '_' + widget
 	points = mc.get(settings.MEMCACHED_PREFIX + widget)
 	payload = {
 		'auth_token': settings.DASHING_AUTH_TOKEN		
@@ -48,6 +50,7 @@ def update_graph_widget(widget, value):
 	mc.set(settings.MEMCACHED_PREFIX + widget, points, 0)
 
 def update_text_widget(widget, text):
+	widget = settings.DASHBOARD_NAME + '_' + widget
 	payload = {
 		'auth_token': settings.DASHING_AUTH_TOKEN,
 		'text': text
