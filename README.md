@@ -10,6 +10,7 @@ Requirements
 * Python 2.7 or newer
 * memcached server
 * ATI GPU with working drivers
+* cgminer with enabled API
 
 Setup
 =====
@@ -18,4 +19,5 @@ Setup
 * Enter directory: `cd dashing-mining-agent`
 * Install requirements: `pip install -r requirements.txt`
 * Create `local_settings.py` file based on `settings.py` file
+* Start cgminer with API enabled by adding `--api-listen --api-allow=127.0.0.1` flags
 * Edit crontab to send events every minute: `* * * * *  export DISPLAY=:0;/usr/bin/python /repo_path/dashing-mining-agent/agent.py`
