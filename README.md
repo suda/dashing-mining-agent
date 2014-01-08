@@ -39,4 +39,4 @@ Wojtek Siudzinski - [@suda](https://twitter.com/suda)
 License
 =======
 
-Distributed under the [MIT license](https://github.com/suda/dashing-mining-dashboard/blob/master/LICENSE)
+Distributed under the [MIT license](https://github.com/suda/dashing-mining-agent/blob/master/LICENSE)
