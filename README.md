@@ -21,3 +21,22 @@ Setup
 * Create `local_settings.py` file based on `settings.py` file
 * Start cgminer with API enabled by adding `--api-listen --api-allow=127.0.0.1` flags
 * Edit crontab to send events every minute: `* * * * *  export DISPLAY=:0;/usr/bin/python /repo_path/dashing-mining-agent/agent.py`
+
+Donations
+========
+
+Any donations are welcome and should result in more features in less time :)
+
+BTC address: `1AAkZXsn9c2EWWbo7yzDEgMz1b3wMBN52Q`
+
+LTC address: `LehFD6SvT3PfE4gBbrQwhXdrmFWwdrFxrU`
+
+Author
+======
+
+Wojtek Siudzinski - [@suda](https://twitter.com/suda)
+
+License
+=======
+
+Distributed under the [MIT license](https://github.com/suda/dashing-mining-dashboard/blob/master/LICENSE)
