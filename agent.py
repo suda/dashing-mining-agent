@@ -5,6 +5,7 @@ import socket
 import json
 import datetime
 import re
+import sys
 from subprocess import check_output
 
 try:
@@ -68,13 +69,14 @@ def get_minerd_summary(address, port):
 	return summary
 
 def get_gpu_temperature(sensor):
-	output = check_output(['/usr/bin/aticonfig', '--odgt'])
-	matches = re.search("Sensor %s: Temperature - ([0-9]+\.[0-9]+)" % (str(sensor),), output)
+	if sys.platform == 'linux2':
+		output = check_output(['/usr/bin/aticonfig', '--odgt'])
+		matches = re.search("Sensor %s: Temperature - ([0-9]+\.[0-9]+)" % (str(sensor),), output)
 
-	if matches is None:
-		return -1
-	else:
-		return float(matches.group(1))
+		if matches is not None:			
+			return float(matches.group(1))
+
+	return -1
 
 if __name__ == '__main__':
 	for dashboard_name in settings.DASHBOARDS:
