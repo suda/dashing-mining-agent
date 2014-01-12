@@ -6,13 +6,31 @@ Agent reporting current cgminer status and GPU temperature to [Dashing mining da
 Requirements
 ============
 
-* Linux (for now)
+* Linux or Windows
 * Python 2.7 or newer
 * ATI GPU with working drivers
 * cgminer with enabled API
 
-Setup
-=====
+Setup on Windows
+================
+
+Setup this agent on every worker you want to monitor.
+
+* Start cgminer with API enabled by adding `--api-listen --api-allow=127.0.0.1` to your batch file
+* Install [Python and pip](http://www.aaronstannard.com/post/2012/08/17/How-to-Setup-a-Proper-Python-Environment-on-Windows.aspx)
+* Download [latest repository](https://github.com/suda/dashing-mining-agent/archive/master.zip) and unpack it's contents
+* Open Command Line and enter repository's directory
+* Install requirements: `pip.exe install -r requirements.txt`
+* Create `local_settings.json` file based on `settings.json` file:
+  * Set `dashing-url` to your Heroku app url
+  * Set `dashing-auth-token` to token you've set when setting up dashing-mining-dashboard
+  * Set `worker-name` array with your worker name
+* Test if agent works: `python.exe agent.py`
+* Create batch file `agent.bat` containing full path to python and `agent.py` file (i.e. `C:\Python27\python.exe C:\Users\miner\Desktop\dashing-mining-agent\agent.py`)
+* Start this batch file every minute: `schtasks /create /tn dashing-mining-agent /sc MINUTE /tr C:\Users\miner\Desktop\dashing-mining-agent\agent.bat`
+
+Setup on Linux
+==============
 
 Setup this agent on every worker you want to monitor.
 
@@ -26,6 +44,9 @@ Setup this agent on every worker you want to monitor.
   * Set `worker-name` array with your worker name
 * Test if agent works: `python agent.py` (if there's an error about X server not being active, execute: `export DISPLAY=:0`)
 * Edit crontab to send events every minute: `* * * * *  export DISPLAY=:0;/usr/bin/python /repo_path/dashing-mining-agent/agent.py`
+
+Support
+=======
 
 If you have any problems with setting up this agent, [create new issue](https://github.com/suda/dashing-mining-agent/issues/new) and I'll try to help.
 
