@@ -1,3 +1,4 @@
 *.pyc
 local_settings.py
 local_settings.json
+history.json
