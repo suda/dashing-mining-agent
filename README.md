@@ -8,7 +8,6 @@ Requirements
 
 * Linux (for now)
 * Python 2.7 or newer
-* memcached server
 * ATI GPU with working drivers
 * cgminer with enabled API
 
@@ -17,16 +16,15 @@ Setup
 
 Setup this agent on every worker you want to monitor.
 
-* If you don't have memcached, install it (`sudo apt-get install memcached` on Ubuntu/Debian)
 * Start cgminer with API enabled by adding `--api-listen --api-allow=127.0.0.1` to its command line
 * Clone repository: `git clone https://github.com/suda/dashing-mining-agent.git`
 * Enter directory: `cd dashing-mining-agent`
 * Install requirements: `pip install -r requirements.txt`
-* Create `local_settings.py` file based on `settings.py` file:
-  * Set `DASHING_URL` to your Heroku app url
-  * Set `DASHING_AUTH_TOKEN` to token you've set when setting up dashing-mining-dashboard
-  * Fill `DASHBOARDS` array with your worker name, cgminer address/port and GPU to monitor (if you want to see GPU ids, type `aticonfig --odgt`)
-* Test if agent works: `python agent.py`
+* Create `local_settings.json` file based on `settings.json` file:
+  * Set `dashing-url` to your Heroku app url
+  * Set `dashing-auth-token` to token you've set when setting up dashing-mining-dashboard
+  * Set `worker-name` array with your worker name
+* Test if agent works: `python agent.py` (if there's an error about X server not being active, execute: `export DISPLAY=:0`)
 * Edit crontab to send events every minute: `* * * * *  export DISPLAY=:0;/usr/bin/python /repo_path/dashing-mining-agent/agent.py`
 
 If you have any problems with setting up this agent, [create new issue](https://github.com/suda/dashing-mining-agent/issues/new) and I'll try to help.
