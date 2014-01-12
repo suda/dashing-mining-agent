@@ -14,7 +14,8 @@ history_file_path = path.join(path.dirname(path.abspath(__file__)), 'history.jso
 settings = {}
 history = {}
 
-def update_number_widget(dashboard_name, widget, value):	
+def update_number_widget(dashboard_name, widget, value):
+	widget = dashboard_name + '_' + widget
 	old_value = history.get(widget)
 	payload = {
 		'auth_token': settings.get('dashing-auth-token'),
@@ -24,10 +25,11 @@ def update_number_widget(dashboard_name, widget, value):
 	if old_value is not None:		
 		payload.update({'last': old_value})
 
-	requests.post(settings.get('dashing-url') + 'widgets/' + widget, data=json.dumps(payload))
+	requests.post(settings.get('dashing-url') + 'widgets/' + widget, data=json.dumps(payload))	
 	history.update({ widget: value})
 
 def update_graph_widget(dashboard_name, widget, value):
+	widget = dashboard_name + '_' + widget
 	points = history.get(widget)
 	payload = {
 		'auth_token': settings.get('dashing-auth-token')		
@@ -48,6 +50,7 @@ def update_graph_widget(dashboard_name, widget, value):
 	history.update({ widget: points})
 
 def update_text_widget(dashboard_name, widget, text):
+	widget = dashboard_name + '_' + widget
 	payload = {
 		'auth_token': settings.get('dashing-auth-token'),
 		'text': text
