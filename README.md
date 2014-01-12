@@ -29,6 +29,17 @@ Setup this agent on every worker you want to monitor.
 
 If you have any problems with setting up this agent, [create new issue](https://github.com/suda/dashing-mining-agent/issues/new) and I'll try to help.
 
+Settings file
+=============
+
+`settings.json` / `local_settings.json` fields:
+
+* `worker-name` - Name of dashbord in DMD
+* `dashing-url` - URL for your Dashing instance (with trailing slash)
+* `dashing-auth-token` - Auth token set in config.ru file of your Dashing
+* `minerd-address` - Minerd listen address specified by --api-listen parameter
+* `minerd-port` - Minerd listen port specified by --api-port parameter
+
 Donations
 ========
 
