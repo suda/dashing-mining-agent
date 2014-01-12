@@ -17,20 +17,20 @@ history = {}
 def update_number_widget(dashboard_name, widget, value):	
 	old_value = history.get(widget)
 	payload = {
-		'auth_token': settings.DASHING_AUTH_TOKEN,
+		'auth_token': settings.get('dashing-auth-token'),
 		'current': value
 	}
 
 	if old_value is not None:		
 		payload.update({'last': old_value})
 
-	requests.post(settings.DASHING_URL + 'widgets/' + widget, data=json.dumps(payload))
+	requests.post(settings.get('dashing-url') + 'widgets/' + widget, data=json.dumps(payload))
 	history.update({ widget: value})
 
 def update_graph_widget(dashboard_name, widget, value):
 	points = history.get(widget)
 	payload = {
-		'auth_token': settings.DASHING_AUTH_TOKEN		
+		'auth_token': settings.get('dashing-auth-token')		
 	}
 
 	if points is None:		
@@ -44,16 +44,16 @@ def update_graph_widget(dashboard_name, widget, value):
 	points = points[-10:]
 	payload.update({'points': points})
 
-	requests.post(settings.DASHING_URL + 'widgets/' + widget, data=json.dumps(payload))
+	requests.post(settings.get('dashing-url') + 'widgets/' + widget, data=json.dumps(payload))
 	history.update({ widget: points})
 
 def update_text_widget(dashboard_name, widget, text):
 	payload = {
-		'auth_token': settings.DASHING_AUTH_TOKEN,
+		'auth_token': settings.get('dashing-auth-token'),
 		'text': text
 	}
 
-	requests.post(settings.DASHING_URL + 'widgets/' + widget, data=json.dumps(payload))
+	requests.post(settings.get('dashing-url') + 'widgets/' + widget, data=json.dumps(payload))
 
 def get_minerd_summary(address, port):
 	minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
