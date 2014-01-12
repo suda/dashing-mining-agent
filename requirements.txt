@@ -1,3 +1,2 @@
-python-memcached==1.53
 requests==2.1.0
 wsgiref==0.1.2
