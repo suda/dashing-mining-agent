@@ -58,6 +58,26 @@ def update_text_widget(dashboard_name, widget, text):
 
 	requests.post(settings.get('dashing-url') + 'widgets/' + widget, data=json.dumps(payload))
 
+def update_temperature_widget(dashboard_name, widget, data):
+	widget = dashboard_name + '_' + widget
+
+	if data == -1:
+		return
+
+	points = []
+	for point in data:
+		points.append({
+			'x': int(point[0]),
+			'y': float(point[1])
+		})
+	
+	payload = {
+		'auth_token': settings.get('dashing-auth-token'),
+		'points': points
+	}
+	
+	requests.post(settings.get('dashing-url') + 'widgets/' + widget, data=json.dumps(payload))	
+
 def get_minerd_summary(address, port):
 	minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	minerd_socket.connect((address, port))
@@ -67,13 +87,13 @@ def get_minerd_summary(address, port):
 
 	return summary
 
-def get_gpu_temperature(sensor):
-	if sys.platform == 'linux2':
+def get_gpu_temperature():
+	if sys.platform == 'linux2' or True:
 		output = check_output(['/usr/bin/aticonfig', '--odgt'])
-		matches = re.search("Sensor %s: Temperature - ([0-9]+\.[0-9]+)" % (str(sensor),), output)
+		matches = re.findall("Sensor ([0-9]+): Temperature - ([0-9]+\.[0-9]+)", output)
 
-		if matches is not None:			
-			return float(matches.group(1))
+		if matches != []:			
+			return matches
 
 	return -1
 
@@ -114,7 +134,7 @@ if __name__ == '__main__':
 		update_number_widget(dashboard_name, 'errors', summary['SUMMARY'][0]['Hardware Errors'])	
 		elapsed = str(datetime.timedelta(seconds=int(summary['SUMMARY'][0]['Elapsed'])))
 		update_text_widget(dashboard_name, 'elapsed', elapsed)
-		# update_graph_widget(dashboard_name, 'temperature', get_gpu_temperature(current_dashboard['GPU_SENSOR_NUMBER']))
+		update_temperature_widget(dashboard_name, 'temperature', get_gpu_temperature())
 
 		# Save history object
 		with open(history_file_path, 'w+') as history_file:
