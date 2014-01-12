@@ -88,13 +88,23 @@ def get_minerd_summary(address, port):
 	return summary
 
 def get_gpu_temperature():
-	if sys.platform == 'linux2' or True:
+	if sys.platform == 'linux2':
 		output = check_output(['/usr/bin/aticonfig', '--odgt'])
 		matches = re.findall("Sensor ([0-9]+): Temperature - ([0-9]+\.[0-9]+)", output)
 
 		if matches != []:			
 			return matches
-
+	elif sys.platform == 'win32':
+		# On windows, cgminer _should_ be able to obtain temperature info
+		minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		minerd_socket.connect((address, port))
+		minerd_socket.sendall('{"command":"devs"}')
+		received_data = minerd_socket.recv(4096)
+		devs = json.loads(received_data[:-1])
+		temps = []
+		for dev in devs['DEVS']:
+			temps.append((dev['GPU'], dev['Temperature']))
+		return temps
 	return -1
 
 if __name__ == '__main__':
