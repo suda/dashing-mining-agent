@@ -7,13 +7,9 @@ import datetime
 import re
 import sys
 from subprocess import check_output
+from os import path
 
-try:
-	import settings
-except ImportError:
-	raise Exception(u'Missing settings.py file')
-
-mc = memcache.Client(settings.MEMCACHED)
+settings = {}
 
 def update_number_widget(dashboard_name, widget, value):
 	widget = dashboard_name + '_' + widget
@@ -79,14 +75,35 @@ def get_gpu_temperature(sensor):
 	return -1
 
 if __name__ == '__main__':
-	for dashboard_name in settings.DASHBOARDS:
-		current_dashboard = settings.DASHBOARDS[dashboard_name]
-		summary = get_minerd_summary(current_dashboard['MINERD_ADDRESS'], current_dashboard['MINERD_PORT'])
+	try:
+		settings_file = open(path.join(path.dirname(path.abspath(__file__)), 'settings.json'))
+		settings = json.load(settings_file)
+		settings_file.close()
+
+		# Try to load local settings if they exist
+		try:
+			settings_file = open(path.join(path.dirname(path.abspath(__file__)), 'local_settings.json'))
+			settings.update(json.load(settings_file))
+			settings_file.close()
+		except:
+			pass
+
+		if settings.get('dashing-url') == '':
+			raise Exception(u'Please specify dashing-url in settings file')
+
+		if settings.get('dashing-auth-token') == '':
+			raise Exception(u'Please specify dashing-auth-token in settings file')
+
+		dashboard_name = settings.get('worker-name')
+
+		summary = get_minerd_summary(settings.get('minerd-address'), settings.get('minerd-port'))
 		update_graph_widget(dashboard_name, 'khs', float(summary['SUMMARY'][0]['MHS 5s']) * 1000)
 		update_number_widget(dashboard_name, 'accepted', summary['SUMMARY'][0]['Accepted'])
 		update_number_widget(dashboard_name, 'rejected', summary['SUMMARY'][0]['Rejected'])
 		update_number_widget(dashboard_name, 'errors', summary['SUMMARY'][0]['Hardware Errors'])	
 		elapsed = str(datetime.timedelta(seconds=int(summary['SUMMARY'][0]['Elapsed'])))
 		update_text_widget(dashboard_name, 'elapsed', elapsed)
-		update_graph_widget(dashboard_name, 'temperature', get_gpu_temperature(current_dashboard['GPU_SENSOR_NUMBER']))	
+		# update_graph_widget(dashboard_name, 'temperature', get_gpu_temperature(current_dashboard['GPU_SENSOR_NUMBER']))	
 
+	except IOError:
+		raise Exception(u'Missing settings.json file')
