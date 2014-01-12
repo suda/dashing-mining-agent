@@ -78,9 +78,9 @@ def update_temperature_widget(dashboard_name, widget, data):
 	
 	requests.post(settings.get('dashing-url') + 'widgets/' + widget, data=json.dumps(payload))	
 
-def get_minerd_summary(address, port):
+def get_minerd_summary():
 	minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	minerd_socket.connect((address, port))
+	minerd_socket.connect((settings.get('minerd-address'), settings.get('minerd-port')))
 	minerd_socket.sendall('{"command":"summary"}')
 	received_data = minerd_socket.recv(4096)
 	summary = json.loads(received_data[:-1])
@@ -97,7 +97,7 @@ def get_gpu_temperature():
 	elif sys.platform == 'win32':
 		# On windows, cgminer _should_ be able to obtain temperature info
 		minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		minerd_socket.connect((address, port))
+		minerd_socket.connect((settings.get('minerd-address'), settings.get('minerd-port')))
 		minerd_socket.sendall('{"command":"devs"}')
 		received_data = minerd_socket.recv(4096)
 		devs = json.loads(received_data[:-1])
@@ -137,7 +137,7 @@ if __name__ == '__main__':
 		except IOError:
 			pass
 
-		summary = get_minerd_summary(settings.get('minerd-address'), settings.get('minerd-port'))
+		summary = get_minerd_summary()
 		update_graph_widget(dashboard_name, 'khs', float(summary['SUMMARY'][0]['MHS 5s']) * 1000)
 		update_number_widget(dashboard_name, 'accepted', summary['SUMMARY'][0]['Accepted'])
 		update_number_widget(dashboard_name, 'rejected', summary['SUMMARY'][0]['Rejected'])
