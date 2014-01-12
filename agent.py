@@ -9,11 +9,13 @@ import sys
 from subprocess import check_output
 from os import path
 
-settings = {}
+history_file_path = path.join(path.dirname(path.abspath(__file__)), 'history.json')
 
-def update_number_widget(dashboard_name, widget, value):
-	widget = dashboard_name + '_' + widget
-	old_value = mc.get(settings.MEMCACHED_PREFIX + widget)
+settings = {}
+history = {}
+
+def update_number_widget(dashboard_name, widget, value):	
+	old_value = history.get(widget)
 	payload = {
 		'auth_token': settings.DASHING_AUTH_TOKEN,
 		'current': value
@@ -23,11 +25,10 @@ def update_number_widget(dashboard_name, widget, value):
 		payload.update({'last': old_value})
 
 	requests.post(settings.DASHING_URL + 'widgets/' + widget, data=json.dumps(payload))
-	mc.set(settings.MEMCACHED_PREFIX + widget, value, 0)
+	history.update({ widget: value})
 
 def update_graph_widget(dashboard_name, widget, value):
-	widget = dashboard_name + '_' + widget
-	points = mc.get(settings.MEMCACHED_PREFIX + widget)
+	points = history.get(widget)
 	payload = {
 		'auth_token': settings.DASHING_AUTH_TOKEN		
 	}
@@ -44,10 +45,9 @@ def update_graph_widget(dashboard_name, widget, value):
 	payload.update({'points': points})
 
 	requests.post(settings.DASHING_URL + 'widgets/' + widget, data=json.dumps(payload))
-	mc.set(settings.MEMCACHED_PREFIX + widget, points, 0)
+	history.update({ widget: points})
 
 def update_text_widget(dashboard_name, widget, text):
-	widget = dashboard_name + '_' + widget
 	payload = {
 		'auth_token': settings.DASHING_AUTH_TOKEN,
 		'text': text
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 			settings_file = open(path.join(path.dirname(path.abspath(__file__)), 'local_settings.json'))
 			settings.update(json.load(settings_file))
 			settings_file.close()
-		except:
+		except IOError:
 			pass
 
 		if settings.get('dashing-url') == '':
@@ -96,6 +96,14 @@ if __name__ == '__main__':
 
 		dashboard_name = settings.get('worker-name')
 
+		# Initialize history object
+		try:
+			history_file = open(history_file_path)
+			history = json.load(history_file)
+			history_file.close()
+		except IOError:
+			pass
+
 		summary = get_minerd_summary(settings.get('minerd-address'), settings.get('minerd-port'))
 		update_graph_widget(dashboard_name, 'khs', float(summary['SUMMARY'][0]['MHS 5s']) * 1000)
 		update_number_widget(dashboard_name, 'accepted', summary['SUMMARY'][0]['Accepted'])
@@ -103,7 +111,11 @@ if __name__ == '__main__':
 		update_number_widget(dashboard_name, 'errors', summary['SUMMARY'][0]['Hardware Errors'])	
 		elapsed = str(datetime.timedelta(seconds=int(summary['SUMMARY'][0]['Elapsed'])))
 		update_text_widget(dashboard_name, 'elapsed', elapsed)
-		# update_graph_widget(dashboard_name, 'temperature', get_gpu_temperature(current_dashboard['GPU_SENSOR_NUMBER']))	
+		# update_graph_widget(dashboard_name, 'temperature', get_gpu_temperature(current_dashboard['GPU_SENSOR_NUMBER']))
+
+		# Save history object
+		with open(history_file_path, 'w+') as history_file:
+			json.dump(history, history_file)
 
 	except IOError:
 		raise Exception(u'Missing settings.json file')
