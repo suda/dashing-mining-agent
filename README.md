@@ -35,6 +35,7 @@ Setup on Linux
 Setup this agent on every worker you want to monitor.
 
 * Start cgminer with API enabled by adding `--api-listen --api-allow=127.0.0.1` to its command line
+* Install pre-requisites: `sudo apt-get install install python-dev git python-pip`
 * Clone repository: `git clone https://github.com/suda/dashing-mining-agent.git`
 * Enter directory: `cd dashing-mining-agent`
 * Install requirements: `pip install -r requirements.txt`
@@ -42,7 +43,7 @@ Setup this agent on every worker you want to monitor.
   * Set `dashing-url` to your Heroku app url
   * Set `dashing-auth-token` to token you've set when setting up dashing-mining-dashboard
   * Set `worker-name` array with your worker name
-* Test if agent works: `python agent.py` (if there's an error about X server not being active, execute: `export DISPLAY=:0`)
+* Test if agent works: `python agent.py` (if there's an error about X server not being active, execute: `export DISPLAY=:0`, sometimes it's also needed to run this with `sudo`)
 * Edit crontab to send events every minute: `* * * * *  export DISPLAY=:0;/usr/bin/python /repo_path/dashing-mining-agent/agent.py`
 
 Support
@@ -56,7 +57,7 @@ Settings file
 `settings.json` / `local_settings.json` fields:
 
 * `worker-name` - Name of dashbord in DMD
-* `dashing-url` - URL for your Dashing instance (with trailing slash)
+* `dashing-url` - URL for your Dashing instance (with trailing slash and http:// prefix)
 * `dashing-auth-token` - Auth token set in config.ru file of your Dashing
 * `minerd-address` - Minerd listen address specified by --api-listen parameter
 * `minerd-port` - Minerd listen port specified by --api-port parameter
