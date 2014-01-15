@@ -1,6 +1,5 @@
 import requests
 import json
-import memcache
 import socket
 import json
 import datetime
