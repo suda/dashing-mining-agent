@@ -112,43 +112,42 @@ if __name__ == '__main__':
 		settings_file = open(path.join(path.dirname(path.abspath(__file__)), 'settings.json'))
 		settings = json.load(settings_file)
 		settings_file.close()
-
-		# Try to load local settings if they exist
-		try:
-			settings_file = open(path.join(path.dirname(path.abspath(__file__)), 'local_settings.json'))
-			settings.update(json.load(settings_file))
-			settings_file.close()
-		except IOError:
-			pass
-
-		if settings.get('dashing-url') == '':
-			raise Exception(u'Please specify dashing-url in settings file')
-
-		if settings.get('dashing-auth-token') == '':
-			raise Exception(u'Please specify dashing-auth-token in settings file')
-
-		dashboard_name = settings.get('worker-name')
-
-		# Initialize history object
-		try:
-			history_file = open(history_file_path)
-			history = json.load(history_file)
-			history_file.close()
-		except IOError:
-			pass
-
-		summary = get_minerd_summary()
-		update_graph_widget(dashboard_name, 'khs', float(summary['SUMMARY'][0]['MHS 5s']) * 1000)
-		update_number_widget(dashboard_name, 'accepted', summary['SUMMARY'][0]['Accepted'])
-		update_number_widget(dashboard_name, 'rejected', summary['SUMMARY'][0]['Rejected'])
-		update_number_widget(dashboard_name, 'errors', summary['SUMMARY'][0]['Hardware Errors'])	
-		elapsed = str(datetime.timedelta(seconds=int(summary['SUMMARY'][0]['Elapsed'])))
-		update_text_widget(dashboard_name, 'elapsed', elapsed)
-		update_temperature_widget(dashboard_name, 'temperature', get_gpu_temperature())
-
-		# Save history object
-		with open(history_file_path, 'w+') as history_file:
-			json.dump(history, history_file)
-
 	except IOError:
 		raise Exception(u'Missing settings.json file')
+
+	# Try to load local settings if they exist
+	try:
+		settings_file = open(path.join(path.dirname(path.abspath(__file__)), 'local_settings.json'))
+		settings.update(json.load(settings_file))
+		settings_file.close()
+	except IOError:
+		pass
+
+	if settings.get('dashing-url') == '':
+		raise Exception(u'Please specify dashing-url in settings file')
+
+	if settings.get('dashing-auth-token') == '':
+		raise Exception(u'Please specify dashing-auth-token in settings file')
+
+	dashboard_name = settings.get('worker-name')
+
+	# Initialize history object
+	try:
+		history_file = open(history_file_path)
+		history = json.load(history_file)
+		history_file.close()
+	except IOError:
+		pass
+
+	summary = get_minerd_summary()
+	update_graph_widget(dashboard_name, 'khs', float(summary['SUMMARY'][0]['MHS 5s']) * 1000)
+	update_number_widget(dashboard_name, 'accepted', summary['SUMMARY'][0]['Accepted'])
+	update_number_widget(dashboard_name, 'rejected', summary['SUMMARY'][0]['Rejected'])
+	update_number_widget(dashboard_name, 'errors', summary['SUMMARY'][0]['Hardware Errors'])	
+	elapsed = str(datetime.timedelta(seconds=int(summary['SUMMARY'][0]['Elapsed'])))
+	update_text_widget(dashboard_name, 'elapsed', elapsed)
+	update_temperature_widget(dashboard_name, 'temperature', get_gpu_temperature())
+
+	# Save history object
+	with open(history_file_path, 'w+') as history_file:
+		json.dump(history, history_file)
