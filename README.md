@@ -35,7 +35,7 @@ Setup on Linux
 Setup this agent on every worker you want to monitor.
 
 * Start cgminer with API enabled by adding `--api-listen --api-allow=127.0.0.1` to its command line
-* Install pre-requisites: `sudo apt-get install install python-dev git python-pip`
+* Install pre-requisites: `sudo apt-get install python-dev git python-pip`
 * Clone repository: `git clone https://github.com/suda/dashing-mining-agent.git`
 * Enter directory: `cd dashing-mining-agent`
 * Install requirements: `pip install -r requirements.txt`
