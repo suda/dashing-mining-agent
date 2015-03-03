@@ -66,6 +66,7 @@ Settings file
 * `dashing-auth-token` - Auth token set in config.ru file of your Dashing
 * `minerd-address` - Minerd listen address specified by --api-listen parameter
 * `minerd-port` - Minerd listen port specified by --api-port parameter
+* `temperature-units` - Displays temperature in either Celsius (default) or Fahrenheit
 
 Donations
 ========
