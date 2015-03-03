@@ -92,7 +92,7 @@ def get_gpu_temperature():
 
                 if version == 'armv6l':
                         output = check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'])
-                        output = "Sensor 0: Temperature - " + output.replace("temp=","").replace("'C\n","") + " C"
+                        output = "Sensor 0: Temperature - " + output.replace("temp=","").replace("'C\n"," C")
                         matches = re.findall("Sensor ([0-9]+): Temperature - ([0-9]+\.[0-9]+)", output)
                 else:
                         output = check_output(['/usr/bin/aticonfig', '--odgt'])
