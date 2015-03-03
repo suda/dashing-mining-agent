@@ -91,13 +91,19 @@ def get_gpu_temperature():
                 version = check_output(['uname', '-m']).replace("\n","")
 
                 if version == 'armv6l':
-                        output = check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'])
-                        output = "Sensor 0: Temperature - " + output.replace("temp=","").replace("'C\n"," C")
-                        matches = re.findall("Sensor ([0-9]+): Temperature - ([0-9]+\.[0-9]+)", output)
+                        if path.isfile('/opt/vc/bin/vcgencmd'):
+                                output = check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'])
+                                output = "Sensor 0: Temperature - " + output.replace("temp=","").replace("'C\n"," C")
+                        else:
+                                output = ""
                 else:
-                        output = check_output(['/usr/bin/aticonfig', '--odgt'])
-                        matches = re.findall("Sensor ([0-9]+): Temperature - ([0-9]+\.[0-9]+)", output)
+                        if path.isfile('/usr/bin/aticonfig'):
+                                output = check_output(['/usr/bin/aticonfig', '--odgt'])
+                        else:
+                                output = ""
 
+                matches = re.findall("Sensor ([0-9]+): Temperature - ([0-9]+\.[0-9]+)", output)
+                
 		if matches != []:			
 			return matches
 	elif sys.platform == 'win32':
