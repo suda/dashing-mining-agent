@@ -8,8 +8,13 @@ Requirements
 
 * Linux or Windows
 * Python 2.7 or newer
-* ATI GPU with working drivers
 * cgminer with enabled API
+
+Temperature Module - Supported Devices
+============
+
+* ATI GPU with working drivers
+* Raspberry PI
 
 Setup on Windows
 ================
