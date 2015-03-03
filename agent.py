@@ -67,7 +67,7 @@ def update_temperature_widget(dashboard_name, widget, data):
 	for point in data:
 		points.append({
 			'x': int(point[0]),
-			'y': float(point[1])
+			'y': convert_temp(float(point[1]))
 		})
 	
 	payload = {
@@ -76,6 +76,11 @@ def update_temperature_widget(dashboard_name, widget, data):
 	}
 	
 	requests.post(settings.get('dashing-url') + 'widgets/' + widget, data=json.dumps(payload))	
+
+def convert_temp(data):
+        if settings.get('temperature-units') == 'Fahrenheit':
+                data = (data * 9/5) + 32
+        return float(data)
 
 def get_minerd_summary():
 	minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
