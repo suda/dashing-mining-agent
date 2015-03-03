@@ -79,7 +79,7 @@ def update_temperature_widget(dashboard_name, widget, data):
 
 def convert_temp(data):
         if settings.get('temperature-units') == 'Fahrenheit':
-                data = (data * 9/5) + 32
+                data = round((data * 9/5) + 32, 2)
         return float(data)
 
 def get_minerd_summary():
