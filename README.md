@@ -41,15 +41,19 @@ Setup this agent on every worker you want to monitor.
 
 * Start cgminer with API enabled by adding `--api-listen --api-allow=127.0.0.1` to its command line
 * Install pre-requisites: `sudo apt-get install python-dev git python-pip`
+* Enter directory: `cd /opt`
 * Clone repository: `git clone https://github.com/suda/dashing-mining-agent.git`
 * Enter directory: `cd dashing-mining-agent`
-* Install requirements: `pip install -r requirements.txt`
+* Install requirements: `sudo pip install -r requirements.txt`
 * Create `local_settings.json` file based on `settings.json` file:
   * Set `dashing-url` to your Heroku app url
   * Set `dashing-auth-token` to token you've set when setting up dashing-mining-dashboard
   * Set `worker-name` array with your worker name
 * Test if agent works: `python agent.py` (if there's an error about X server not being active, execute: `export DISPLAY=:0`, sometimes it's also needed to run this with `sudo`)
-* Edit crontab to send events every minute: `* * * * *  export DISPLAY=:0;/usr/bin/python /repo_path/dashing-mining-agent/agent.py`
+* Edit crontab (`sudo crontab -e`) to send events every minute:
+* `* * * * *  export DISPLAY=:0;/usr/bin/python /opt/dashing-mining-agent/agent.py`
+* If you want the dashboard to update every 30 seconds, add the line below, in addition to the line above:
+* `* * * * *  sleep 30; export DISPLAY=:0;/usr/bin/python /opt/dashing-mining-agent/agent.py`
 
 Support
 =======
@@ -66,6 +70,7 @@ Settings file
 * `dashing-auth-token` - Auth token set in config.ru file of your Dashing
 * `minerd-address` - Minerd listen address specified by --api-listen parameter
 * `minerd-port` - Minerd listen port specified by --api-port parameter
+* `temperature-units` - Displays temperature in either Celsius (default) or Fahrenheit
 
 Donations
 ========
