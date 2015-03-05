@@ -45,11 +45,11 @@ Setup this agent on every worker you want to monitor.
 * Clone repository: `sudo git clone https://github.com/suda/dashing-mining-agent.git`
 * Enter directory: `cd dashing-mining-agent`
 * Install requirements: `sudo pip install -r requirements.txt`
-* Create `local_settings.json` file based on `settings.json` file:
+* Create `local_settings.json` file based on `settings.json` file: (`sudo cp settings.json local_settings.json`)
   * Set `dashing-url` to your Heroku app url
   * Set `dashing-auth-token` to token you've set when setting up dashing-mining-dashboard
   * Set `worker-name` array with your worker name
-* Test if agent works: `python agent.py` (if there's an error about X server not being active, execute: `export DISPLAY=:0`, sometimes it's also needed to run this with `sudo`)
+* Test if agent works: `sudo python agent.py` (if there's an error about X server not being active, execute: `export DISPLAY=:0`, sometimes it's also needed to run this with `sudo`)
 * Edit crontab (`sudo crontab -e`) to send events every minute:
 * `* * * * *  export DISPLAY=:0;/usr/bin/python /opt/dashing-mining-agent/agent.py`
 * If you want the dashboard to update every 30 seconds, add the line below, in addition to the line above:
