@@ -4,5 +4,6 @@
 	"dashing-auth-token": "",
 	"minerd-address": "127.0.0.1",
 	"minerd-port": 4028,
-	"temperature-units": "Celsius"
+	"temperature-units": "Celsius",
+	"hash-units": "KH/s"
 }
