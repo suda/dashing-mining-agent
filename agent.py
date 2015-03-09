@@ -81,6 +81,13 @@ def convert_temp(data):
         if settings.get('temperature-units') == 'Fahrenheit':
                 data = round((data * 9/5) + 32, 2)
         return float(data)
+        
+def convert_hash(data):
+        if settings.get('hash-units') == 'KH/s':
+                data = data * 1000
+        if settings.get('hash-units') == 'GH/s':
+                data = data / 1000
+        return data
 
 def get_minerd_summary():
 	minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -91,7 +98,7 @@ def get_minerd_summary():
 
 	return summary
 
-def get_gpu_temperature():
+def get_temperature():
 	if sys.platform == 'linux2':
                 version = check_output(['uname', '-m'])[:3]
 
@@ -157,13 +164,13 @@ if __name__ == '__main__':
 		pass
 
 	summary = get_minerd_summary()
-	update_graph_widget(dashboard_name, 'khs', float(summary['SUMMARY'][0]['MHS 5s']) * 1000)
+	update_graph_widget(dashboard_name, 'hash', float(convert_hash(summary['SUMMARY'][0]['MHS 5s'])))
 	update_number_widget(dashboard_name, 'accepted', summary['SUMMARY'][0]['Accepted'])
 	update_number_widget(dashboard_name, 'rejected', summary['SUMMARY'][0]['Rejected'])
 	update_number_widget(dashboard_name, 'errors', summary['SUMMARY'][0]['Hardware Errors'])	
 	elapsed = str(datetime.timedelta(seconds=int(summary['SUMMARY'][0]['Elapsed'])))
 	update_text_widget(dashboard_name, 'elapsed', elapsed)
-	update_temperature_widget(dashboard_name, 'temperature', get_gpu_temperature())
+	update_temperature_widget(dashboard_name, 'temperature', get_temperature())
 
 	# Save history object
 	with open(history_file_path, 'w+') as history_file:
