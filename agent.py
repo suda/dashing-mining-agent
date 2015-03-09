@@ -93,9 +93,9 @@ def get_minerd_summary():
 
 def get_gpu_temperature():
 	if sys.platform == 'linux2':
-                version = check_output(['uname', '-m']).replace("\n","")
+                version = check_output(['uname', '-m'])[:3]
 
-                if version == 'armv6l':
+                if version == 'arm':
                         if path.isfile('/opt/vc/bin/vcgencmd'):
                                 output = check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'])
                                 output = "Sensor 0: Temperature - " + output.replace("temp=","").replace("'C\n"," C")
