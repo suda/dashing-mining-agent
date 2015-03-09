@@ -14,7 +14,7 @@ Temperature Module - Supported Devices
 ============
 
 * ATI GPU with working drivers
-* Raspberry PI
+* ARM chipset (such as Raspberry PI)
 
 Setup on Windows
 ================
@@ -71,6 +71,7 @@ Settings file
 * `minerd-address` - Minerd listen address specified by --api-listen parameter
 * `minerd-port` - Minerd listen port specified by --api-port parameter
 * `temperature-units` - Displays temperature in either Celsius (default) or Fahrenheit
+* `hash-units` - Displays hash units in either KH/s (default), MH/s, or GH/s
 
 Donations
 ========
