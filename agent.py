@@ -98,6 +98,15 @@ def get_minerd_summary():
 
 	return summary
 
+def get_minerd_pool_summary():
+        minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        minerd_socket.connect((settings.get('minerd-address'), settings.get('minerd-port')))
+        minerd_socket.sendall('{"command":"pools"}')
+        received_data = minerd_socket.recv(4096)
+        pool_summary = json.loads(received_data[:-1])
+
+        return pool_summary
+
 def get_temperature():
 	if sys.platform == 'linux2':
                 version = check_output(['uname', '-m'])[:3]
@@ -171,6 +180,20 @@ if __name__ == '__main__':
 	elapsed = str(datetime.timedelta(seconds=int(summary['SUMMARY'][0]['Elapsed'])))
 	update_text_widget(dashboard_name, 'elapsed', elapsed)
 	update_temperature_widget(dashboard_name, 'temperature', get_temperature())
+
+        pool_summary = get_minerd_pool_summary()
+
+        for num in range(0, int(pool_summary['STATUS'][0]['Msg'].split()[0])-1):
+                if pool_summary['POOLS'][num]['Stratum Active']:
+                        pool = pool_summary['POOLS'][num]['URL']
+                        pool_difficulty = pool_summary['POOLS'][num]['Last Share Difficulty']
+
+        if pool == "":
+                pool = "Inactive"
+                pool_difficulty = "N/A"
+
+        update_text_widget(dashboard_name, 'pool', pool)
+        update_number_widget(dashboard_name, 'pool_difficulty', pool_difficulty)
 
 	# Save history object
 	with open(history_file_path, 'w+') as history_file:
