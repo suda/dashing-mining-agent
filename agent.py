@@ -204,12 +204,17 @@ if __name__ == '__main__':
 
                 elapsed = int(time.time()) - int(start_time)
 
-                #WIP will need to loop for hash / errors
-                #WIP will need to loop for pool
-                #WIP Pool difficulty
-                #WIP Pool
                 hash = 0
                 errors = 0
+                for device in summary['devices']:
+                        for chip in range(len(summary['devices'][device]['chips'])):
+                                hash = hash + int(summary['devices'][device]['chips'][chip]['hashrate'])
+                                errors = errors + int(summary['devices'][device]['chips'][chip]['hw_errors'])
+
+                hash = round((float(hash) / 1000) / 1000, 2)
+
+                #WIP Pool difficulty
+                #WIP Pool
                 pool = "Inactive"
                 pool_difficulty = "N/A"
         else:
