@@ -1,14 +1,14 @@
 Dashing mining agent
 ====================
 
-Agent reporting current cgminer status and GPU/CPU temperature to [Dashing mining dashboard](https://github.com/suda/dashing-mining-dashboard).
+Agent reporting current cgminer/cpuminer status and GPU/CPU temperature to [Dashing mining dashboard](https://github.com/suda/dashing-mining-dashboard).
 
 Requirements
 ============
 
 * Linux or Windows
 * Python 2.7 or newer
-* cgminer with enabled API
+* cgminer with enabled API or cpuminer with enabled API
 
 Temperature Module - Supported Devices
 ============
@@ -21,7 +21,7 @@ Setup on Windows
 
 Setup this agent on every worker you want to monitor.
 
-* Start cgminer with API enabled by adding `--api-listen --api-allow=127.0.0.1` to your batch file
+* Start cgminer (or cpuminer, no flags needed for cpuminer) with API enabled by adding `--api-listen --api-allow=127.0.0.1` to your batch file
 * Install [Python and pip](http://www.aaronstannard.com/post/2012/08/17/How-to-Setup-a-Proper-Python-Environment-on-Windows.aspx)
 * Download [latest repository](https://github.com/suda/dashing-mining-agent/archive/master.zip) and unpack it's contents
 * Open Command Line and enter repository's directory
@@ -39,7 +39,7 @@ Setup on Linux
 
 Setup this agent on every worker you want to monitor.
 
-* Start cgminer with API enabled by adding `--api-listen --api-allow=127.0.0.1` to its command line
+* Start cgminer (or cpuminer, no flags needed for cpuminer) with API enabled by adding `--api-listen --api-allow=127.0.0.1` to its command line
 * Install pre-requisites: `sudo apt-get install python-dev git python-pip`
 * Enter directory: `cd /opt`
 * Clone repository: `sudo git clone https://github.com/suda/dashing-mining-agent.git`
