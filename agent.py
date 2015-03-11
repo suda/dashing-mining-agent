@@ -1,8 +1,8 @@
 import requests
 import json
 import socket
-import json
 import datetime
+import time
 import re
 import sys
 from subprocess import check_output
@@ -107,6 +107,29 @@ def get_minerd_pool_summary():
 
         return pool_summary
 
+def check_cpuminer():
+        minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        minerd_socket.connect((settings.get('minerd-address'), settings.get('minerd-port')))
+        minerd_socket.sendall('{"get":"stats"}\n')
+
+        if "error" in minerd_socket.recv(4096):
+                cpuminer = True
+        else:
+                cpuminer = False
+
+        return cpuminer
+
+def get_cpuminer_summary():
+        minerd_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        minerd_socket.connect((settings.get('minerd-address'), settings.get('minerd-port')))
+
+        minerd_socket.sendall('{"get":"stats"}\n')
+        received_data = minerd_socket.recv(16384)
+
+        summary = json.loads(received_data.replace("\'", '"'))
+
+        return summary
+
 def get_temperature():
 	if sys.platform == 'linux2':
                 version = check_output(['uname', '-m'])[:3]
@@ -172,29 +195,55 @@ if __name__ == '__main__':
 	except IOError:
 		pass
 
-	summary = get_minerd_summary()
-	update_graph_widget(dashboard_name, 'hash', float(convert_hash(summary['SUMMARY'][0]['MHS 5s'])))
-	update_number_widget(dashboard_name, 'accepted', summary['SUMMARY'][0]['Accepted'])
-	update_number_widget(dashboard_name, 'rejected', summary['SUMMARY'][0]['Rejected'])
-	update_number_widget(dashboard_name, 'errors', summary['SUMMARY'][0]['Hardware Errors'])	
-	elapsed = str(datetime.timedelta(seconds=int(summary['SUMMARY'][0]['Elapsed'])))
-	update_text_widget(dashboard_name, 'elapsed', elapsed)
-	update_temperature_widget(dashboard_name, 'temperature', get_temperature())
+       if check_cpuminer():
+                summary = get_cpuminer_summary()
 
-        pool_summary = get_minerd_pool_summary()
+                accepted = summary['pools'][0]['stats'][0]['accepted']
+                rejected = summary['pools'][0]['stats'][0]['rejected']
+                start_time = summary['pools'][0]['stats'][0]['start_time']
 
-        for num in range(0, int(pool_summary['STATUS'][0]['Msg'].split()[0])-1):
-                if pool_summary['POOLS'][num]['Stratum Active']:
-                        pool = pool_summary['POOLS'][num]['URL']
-                        pool_difficulty = pool_summary['POOLS'][num]['Last Share Difficulty']
+                elapsed = int(time.time()) - int(start_time)
 
-        if pool == "":
+                #WIP will need to loop for hash / errors
+                #WIP will need to loop for pool
+                #WIP Pool difficulty
+                #WIP Pool
+                hash = 0
+                errors = 0
                 pool = "Inactive"
                 pool_difficulty = "N/A"
+        else:
+                summary = get_minerd_summary()
+                hash = summary['SUMMARY'][0]['MHS 5s']
+                accepted = summary['SUMMARY'][0]['Accepted']
+                rejected = summary['SUMMARY'][0]['Rejected']
+                errors = summary['SUMMARY'][0]['Hardware Errors']
+                elapsed = summary['SUMMARY'][0]['Elapsed']
 
+                pool_summary = get_minerd_pool_summary()
+
+                for num in range(0, int(pool_summary['STATUS'][0]['Msg'].split()[0])-1):
+                        if pool_summary['POOLS'][num]['Stratum Active']:
+                                pool = pool_summary['POOLS'][num]['URL']
+                                pool_difficulty = pool_summary['POOLS'][num]['Last Share Difficulty']
+
+                        if pool == "":
+                                pool = "Inactive"
+                                pool_difficulty = "N/A"
+
+        update_graph_widget(dashboard_name, 'hash', float(convert_hash(hash)))
+        update_number_widget(dashboard_name, 'accepted', accepted)
+        
+        update_number_widget(dashboard_name, 'rejected', rejected)
+        update_number_widget(dashboard_name, 'errors', errors)
+
+        elapsed = str(datetime.timedelta(seconds=int(elapsed)))
+        update_text_widget(dashboard_name, 'elapsed', elapsed)
+
+        update_temperature_widget(dashboard_name, 'temperature', get_temperature())
         update_text_widget(dashboard_name, 'pool', pool)
         update_number_widget(dashboard_name, 'pool_difficulty', pool_difficulty)
-
+        
 	# Save history object
 	with open(history_file_path, 'w+') as history_file:
 		json.dump(history, history_file)
