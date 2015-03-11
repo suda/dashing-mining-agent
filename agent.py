@@ -195,7 +195,7 @@ if __name__ == '__main__':
 	except IOError:
 		pass
 
-       if check_cpuminer():
+	if check_cpuminer():
                 summary = get_cpuminer_summary()
 
                 accepted = summary['pools'][0]['stats'][0]['accepted']
